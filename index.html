@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>雅思备考工作台</title>
+<style>
+:root{
+  --cream:#FAF6EE; --card:#FFFDF8; --line:#E8E1D3; --ink:#2B2B26; --muted:#8A8577;
+  --green:#1D5C43; --green-d:#15473349; --green-deep:#153F2F; --green-l:#E4EFE8; --green-mid:#2E7D5B;
+  --amber:#C98A2D; --amber-l:#FBF1DD; --red:#B23A3A; --red-l:#F9E8E6;
+  --tagL:#E6F0FA; --tagLc:#2A6496; --tagR:#EAF3DE; --tagRc:#3B6D11;
+  --tagW:#FAEEDA; --tagWc:#854F0B; --tagS:#FBEAF0; --tagSc:#993556; --tagV:#EEEDFE; --tagVc:#534AB7;
+}
+*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+body{background:var(--cream);color:var(--ink);font-size:14px;line-height:1.65}
+.app{display:flex;min-height:100vh}
+.side{width:210px;background:var(--green-deep);color:#EAF2ED;padding:22px 12px;flex-shrink:0}
+.side .logo{font-size:17px;font-weight:600;padding:0 12px 18px;letter-spacing:1px}
+.side .logo small{display:block;font-size:11px;font-weight:400;color:#9DBFAE;margin-top:3px;letter-spacing:0}
+.nav{border:none;width:100%;text-align:left;background:transparent;color:#C9DCD1;padding:11px 14px;border-radius:10px;font-size:14px;cursor:pointer;margin-bottom:4px;display:block}
+.nav.on{background:#2E7D5B;color:#fff;font-weight:500}
+.nav:hover{background:#1D5C43;color:#fff}
+.side .foot{font-size:11px;color:#7FA391;padding:18px 14px 0;line-height:1.8}
+.main{flex:1;padding:22px 26px 60px;min-width:0}
+.topbar{display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin-bottom:14px}
+.topbar h1{font-size:20px;font-weight:600;color:var(--green-deep)}
+.topbar .date{color:var(--muted);font-size:13px}
+.topbar .grow{flex:1}
+.pill{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:6px 14px;font-size:13px;display:flex;align-items:center;gap:8px}
+.pbar{width:110px;height:8px;background:#EDE6D6;border-radius:4px;overflow:hidden}
+.pbar i{display:block;height:100%;background:var(--green-mid);transition:width .3s}
+.btn{border:none;border-radius:10px;padding:9px 16px;font-size:13px;cursor:pointer;background:var(--green);color:#fff}
+.btn.ghost{background:transparent;border:1px solid var(--green);color:var(--green)}
+.btn.warn{background:transparent;border:1px solid #D8CDB6;color:var(--muted)}
+.btn.sm{padding:6px 12px;font-size:12px;border-radius:8px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.tea{background:linear-gradient(0deg,var(--card),var(--card));background:var(--card);border:1.5px solid var(--green);border-radius:16px;padding:16px 20px;display:flex;gap:18px;align-items:center;margin-bottom:20px;flex-wrap:wrap}
+.tea .cup{flex-shrink:0}
+.tea .big{font-size:26px;font-weight:600;color:var(--green-deep)}
+.tea .big small{font-size:13px;font-weight:400;color:var(--muted)}
+.tea .rule{font-size:12px;color:var(--muted);margin-top:2px}
+.tea .flow{flex:1;min-width:220px;max-height:96px;overflow-y:auto;font-size:12.5px;border-left:1px dashed var(--line);padding-left:16px}
+.tea .flow .fr{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px dotted #F0EADC}
+.plus{color:var(--green-mid);font-weight:600}.minus{color:var(--red);font-weight:600}
+.view{display:none}.view.on{display:block}
+h2.sec{font-size:16px;font-weight:600;color:var(--green-deep);margin:6px 0 12px}
+.hint{font-size:12px;color:var(--muted)}
+.tcard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:12px}
+.tcard.joined{border-color:var(--green-mid)}
+.tcard.done{background:var(--green-l);border-color:var(--green-mid)}
+.thead{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.tno{background:var(--green-deep);color:#fff;font-size:12px;border-radius:8px;padding:2px 8px}
+.tname{font-weight:600;font-size:14.5px}
+.tcard.done .tname{color:var(--muted)}
+.ttag{font-size:12px;padding:2px 10px;border-radius:10px}
+.tag-听力{background:var(--tagL);color:var(--tagLc)} .tag-阅读{background:var(--tagR);color:var(--tagRc)}
+.tag-写作{background:var(--tagW);color:var(--tagWc)} .tag-口语{background:var(--tagS);color:var(--tagSc)}
+.tag-词汇{background:var(--tagV);color:var(--tagVc)} .tag-模考{background:var(--red-l);color:var(--red)} .tag-复盘{background:#F1EFE8;color:#5F5E5A}
+.trow{font-size:13px;color:#57534A;margin-top:8px}
+.twhy{background:var(--amber-l);border-radius:10px;padding:9px 12px;font-size:12.5px;color:#6B4A10;margin-top:9px}
+.tres{background:var(--green-l);border-radius:10px;padding:9px 12px;font-size:12.5px;color:#204A38;margin-top:8px;display:none}
+.tres.show{display:block}
+.tbtns{display:flex;gap:10px;margin-top:12px}
+.stamp{font-size:12px;color:var(--green-mid);font-weight:600}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:14px}
+.panel h3{font-size:14px;font-weight:600;color:var(--green-deep);margin-bottom:8px}
+.panel ul{padding-left:18px}
+.panel li{margin:5px 0;font-size:13px}
+.topic{display:inline-block;background:#F3EFE4;border-radius:9px;padding:4px 11px;font-size:12.5px;margin:3px 4px 3px 0;color:#57534A}
+.bank{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.book{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.book b{font-size:13px;color:var(--green-deep)}
+.book .ph{font-size:11px;color:var(--muted);margin-left:4px}
+.tcell{display:inline-block;width:30px;text-align:center;border:1px solid var(--line);border-radius:7px;font-size:12px;padding:3px 0;margin:4px 4px 0 0;cursor:pointer;background:#fff;user-select:none}
+.tcell.s1{background:var(--green-l);border-color:var(--green-mid);color:var(--green-deep)}
+.tcell.s2{background:var(--green);color:#fff;border-color:var(--green)}
+pre.tpl{background:#F5F1E6;border-radius:10px;padding:12px;font-size:12.5px;white-space:pre-wrap;font-family:inherit;margin:6px 0 12px;line-height:1.7}
+.err{border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px;background:var(--card)}
+.err .eh{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:4px}
+input,select,textarea{border:1px solid var(--line);border-radius:10px;padding:9px 12px;font-size:13px;background:#fff;color:var(--ink);font-family:inherit}
+textarea{width:100%;min-height:74px;resize:vertical}
+.stat4{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:14px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.stat .k{font-size:12px;color:var(--muted)} .stat .v{font-size:20px;font-weight:600;color:var(--green-deep);margin-top:2px}
+.phaserow{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.phase{flex:1;min-width:180px;border-radius:12px;padding:12px 14px;border:1px solid var(--line);background:var(--card)}
+.phase.cur{border:1.5px solid var(--green-mid);background:var(--green-l)}
+.phase b{font-size:13.5px;color:var(--green-deep)}
+.phase .pd{font-size:12px;color:var(--muted);margin:2px 0 6px}
+.week{border:1px solid var(--line);border-radius:12px;padding:13px 15px;margin-bottom:10px;background:var(--card)}
+.tagw{display:inline-block;background:var(--red-l);color:var(--red);font-size:12px;padding:2px 9px;border-radius:10px;margin:2px 4px 2px 0}
+.tagw.good{background:var(--green-l);color:var(--green-mid)}
+.sugg{background:var(--amber-l);border-radius:10px;padding:9px 12px;margin-top:8px;font-size:12.5px;color:#6B4A10}
+.dayrow{display:flex;justify-content:space-between;padding:8px 2px;border-bottom:1px solid #F0EADC;font-size:13px}
+.chip{font-size:12px;padding:2px 9px;border-radius:10px}
+.ok{background:var(--green-l);color:var(--green-mid)} .miss{background:var(--red-l);color:var(--red)} .wait{background:#F1EFE8;color:var(--muted)}
+@media(max-width:760px){.app{flex-direction:column}.side{width:100%;display:flex;flex-wrap:wrap;align-items:center;padding:10px}.side .logo{padding:6px 10px;width:100%}.nav{width:auto;margin:2px}.side .foot{display:none}.grid2{grid-template-columns:1fr}.main{padding:16px 14px 50px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="logo">🎓 雅思工作台<small>IELTS 6.5 · 2026.12</small></div>
+    <button class="nav on" data-v="daily">📋 每日计划</button>
+    <button class="nav" data-v="idea">💡 雅思选题灵感</button>
+    <button class="nav" data-v="bank">📚 真题刷题题库</button>
+    <button class="nav" data-v="err">🔍 错题复盘</button>
+    <button class="nav" data-v="prog">📈 备考总进度</button>
+    <div class="foot">上班族轻量方案<br>早25min · 午50min · 晚70min<br>周日晚自动复盘</div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <h1>雅思备考工作台</h1>
+      <span class="date" id="tbDate"></span>
+      <span class="grow"></span>
+      <span class="pill">今日 <span id="tbNum">0/0</span><span class="pbar"><i id="tbBar" style="width:0%"></i></span></span>
+      <button class="btn warn sm" onclick="resetToday()">↺ 重置今日</button>
+    </div>
+
+    <div class="tea">
+      <svg class="cup" width="74" height="92" viewBox="0 0 74 92" role="img"><title>喜茶风果茶杯</title>
+        <path d="M14 22 L60 22 L54 84 Q53 89 47 89 L27 89 Q21 89 20 84 Z" fill="#FDF3E3" stroke="#C98A2D" stroke-width="2"/>
+        <path d="M16 44 L58 44 L54 84 Q53 89 47 89 L27 89 Q21 89 20 84 Z" fill="#F6C34C" opacity="0.85"/>
+        <circle cx="30" cy="58" r="5" fill="#E8833A"/><circle cx="44" cy="66" r="6" fill="#D94F3D"/>
+        <circle cx="38" cy="52" r="4" fill="#F19B4B"/><circle cx="28" cy="74" r="4.5" fill="#C93C4F"/>
+        <ellipse cx="37" cy="22" rx="25" ry="5" fill="#FFF9EE" stroke="#C98A2D" stroke-width="2"/>
+        <rect x="40" y="2" width="6" height="24" rx="3" fill="#2E7D5B" transform="rotate(8 43 14)"/>
+        <path d="M24 30 Q37 35 50 30" stroke="#EAD9B8" stroke-width="2" fill="none"/>
+      </svg>
+      <div>
+        <div class="hint">🥤 奶茶奖励池 · 攒满就去喜茶兑现</div>
+        <div class="big" id="teaBig">0 杯</div>
+        <div class="rule">✅ 当日任务全完成 +⅓杯 ｜ ❌ 未完成 −⅓杯 ｜ <span id="teaToday"></span></div>
+      </div>
+      <div class="flow" id="teaFlow"></div>
+    </div>
+
+    <section class="view on" id="v-daily">
+      <h2 class="sec" id="dTitle">今日学习计划</h2>
+      <div class="hint" id="dNote" style="margin-bottom:12px"></div>
+      <div id="cards"></div>
+      <div style="display:flex;gap:10px;align-items:center;margin-top:14px">
+        <button class="btn" id="settleBtn" onclick="settleToday()">🥤 今日打卡结算</button>
+        <span id="settleNote" class="hint"></span>
+      </div>
+      <div class="hint" style="margin-top:8px">流程：每张卡片先点「＋加入计划」→ 学完点「✅ 完成打卡」→ 全部完成后结算领奶茶。漏结算的历史日期会自动按实际情况补记。</div>
+    </section>
+
+    <section class="view" id="v-idea">
+      <h2 class="sec">💡 雅思选题灵感库</h2>
+      <div class="hint" style="margin-bottom:12px">口语素材与写作话题都可以直接发给我：「帮我练 ×× 话题」，我陪你头脑风暴素材、给结构框架、再批改你的输出。</div>
+      <div class="grid2">
+        <div class="panel"><h3>🗣️ 口语 Part 1 高频题（当季常青）</h3>
+          <div><span class="topic">Work / Study</span><span class="topic">Hometown</span><span class="topic">Home / Accommodation</span><span class="topic">Weather</span><span class="topic">Weekends</span><span class="topic">Music</span><span class="topic">Reading</span><span class="topic">Sports</span><span class="topic">Cooking</span><span class="topic">Apps / Phone</span><span class="topic">Transport</span><span class="topic">Sleep</span></div>
+          <div class="hint" style="margin-top:8px">每题准备「直答+1个细节+1个感受」三句即可，拒绝背长稿。</div>
+        </div>
+        <div class="panel"><h3>🗣️ 口语 Part 2 四大类串题</h3>
+          <ul>
+            <li><b>人物类</b>：admire的人 / 有趣的老人 / 帮助过你的人 → 一个「同事前辈」素材通吃</li>
+            <li><b>地点类</b>：安静的地方 / 想再去的城市 / 朋友的家 → 一个「旅行城市」素材通吃</li>
+            <li><b>事件类</b>：学到新技能 / 克服困难 / 难忘决定 → 用「备考雅思/学新软件」本身当素材</li>
+            <li><b>物品类</b>：重要物品 / 一件电子设备 / 收到的礼物 → 一个「手机/手表」素材通吃</li>
+          </ul>
+          <div class="hint">准备4个万能素材 ≈ 覆盖80%题库，换题季只需微调。</div>
+        </div>
+        <div class="panel"><h3>✍️ 大作文9大高频话题池</h3>
+          <div><span class="topic">教育（网课/大学价值）</span><span class="topic">科技（AI/手机依赖）</span><span class="topic">环境（污染/新能源）</span><span class="topic">工作（远程/跳槽）</span><span class="topic">政府投资取向</span><span class="topic">城市化/住房</span><span class="topic">健康（快餐/运动）</span><span class="topic">媒体广告</span><span class="topic">全球化/文化</span></div>
+          <div class="hint" style="margin-top:8px">每话题积累：核心词10个 + 正反论点各2 + 1个例子，比背范文有效。</div>
+        </div>
+        <div class="panel"><h3>✍️ 小作文7种图型清单</h3>
+          <ul>
+            <li>动态线图/柱图（趋势词：surge, decline steadily…）</li>
+            <li>静态柱图/饼图（比较词：account for, twice as…）</li>
+            <li>表格（挑极值+分组概述）</li>
+            <li>流程图（被动语态+顺序连接词）</li>
+            <li>地图题（方位词+变迁表达）</li>
+            <li>混合图（先分图后综合）</li>
+          </ul>
+          <div class="hint">阶段一先攻动态图+静态图（占考试60%+）。</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="view" id="v-bank">
+      <h2 class="sec">📚 真题刷题题库 · 剑4–剑19</h2>
+      <div class="hint" style="margin-bottom:12px">点击格子记录刷题状态：空白=未做 → 绿框=已做一遍 → 深绿=已精刷复盘。每本4套（T1–T4）。</div>
+      <div class="phaserow">
+        <div class="phase"><b>剑4–9</b><div class="pd">阶段一 · 非计时精读精听</div></div>
+        <div class="phase"><b>剑10–15</b><div class="pd">阶段二 · 计时分项刷题</div></div>
+        <div class="phase"><b>剑16–19</b><div class="pd">阶段三 · 全真模考专用</div></div>
+      </div>
+      <div class="bank" id="bankGrid"></div>
+      <div class="hint" style="margin-top:10px">刷完记得把错题记入「错题复盘」，或直接把错题发我批改。</div>
+    </section>
+
+    <section class="view" id="v-err">
+      <h2 class="sec">🔍 错题复盘中心</h2>
+      <div class="grid2">
+        <div>
+          <div class="panel"><h3>➕ 登记错题 / 薄弱点</h3>
+            <div style="display:flex;gap:8px;margin-bottom:8px">
+              <select id="eSub"><option>听力</option><option>阅读</option><option>写作</option><option>口语</option><option>词汇</option></select>
+              <input id="eSrc" placeholder="来源，如 剑12T5S2" style="flex:1">
+            </div>
+            <textarea id="eTxt" placeholder="错题内容 / 错因 / 正确思路…"></textarea>
+            <button class="btn sm" style="margin-top:8px" onclick="addErr()">保存错题</button>
+          </div>
+          <div id="errList"></div>
+        </div>
+        <div>
+          <div class="panel"><h3>✏️ 批改提交模板（复制发我即可）</h3>
+            <div class="hint">我会逐题讲错因 → 纠语法/逻辑 → 标薄弱点 → 给优化方案，批改结论建议回填到左侧错题本。</div>
+            <pre class="tpl">【听力批改】剑12 T5 S2
+错题：14题 填enviroment→environment
+　　　17题 选B→C（没听出转折）
+困惑：语速快跟不上</pre>
+            <pre class="tpl">【阅读批改】剑13 T1 P2
+18题判断 我选TRUE→NOT GIVEN
+定位句：（贴原文句）
+我的理解：（为什么这么选）</pre>
+            <pre class="tpl">【写作批改】大作文 剑15 T2
+题目：（贴题目）
+作文：（贴全文）
+自感薄弱：论证展开/词汇重复</pre>
+            <pre class="tpl">【口语修正】Part2 admire的人
+我的答案：（录音转文字）
+想改进：地道度/时态/展不开</pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="view" id="v-prog">
+      <h2 class="sec">📈 备考总进度</h2>
+      <div class="stat4">
+        <div class="stat"><div class="k">距考试（12.19预估）</div><div class="v" id="pDays">–</div></div>
+        <div class="stat"><div class="k">累计打卡天数</div><div class="v" id="pTotal">0</div></div>
+        <div class="stat"><div class="k">达标率</div><div class="v" id="pRate">–</div></div>
+        <div class="stat"><div class="k">累计学习时长</div><div class="v" id="pMins">0h</div></div>
+        <div class="stat"><div class="k">连续达标</div><div class="v" id="pStreak">0天</div></div>
+      </div>
+      <div class="phaserow" id="phaseRow"></div>
+      <div class="panel"><h3>📅 打卡记录</h3><div id="histList"></div></div>
+      <h2 class="sec">📊 每周学习复盘（自动生成）</h2>
+      <div class="hint" style="margin-bottom:10px">每周一至周日为一个周期，按五项能力统计完成率，自动识别薄弱项并给出下周微调建议。</div>
+      <div id="reviewList"></div>
+      <div class="panel" style="margin-top:16px;border:1.5px solid var(--green)"><h3>🔄 多设备数据同步（微信可用）</h3>
+        <div class="hint" style="margin-bottom:10px">电脑与手机共用同一份打卡/奶茶数据：① 在电脑点「📋 复制备份文本」→ ② 用微信把文本<b>发给自己</b> → ③ 手机打开本页，把文本粘贴到下框，点「🔄 导入」即可无缝衔接。</div>
+        <textarea id="syncBox" placeholder="这里会显示当前备份文本；导入时把另一台设备的备份文本粘贴到这里。" style="width:100%;height:130px;font-size:12px;border:1px solid var(--line);border-radius:10px;padding:10px;resize:vertical;font-family:inherit;color:var(--ink)"></textarea>
+        <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn sm" onclick="copyBackup()">📋 复制备份文本</button>
+          <button class="btn ghost sm" onclick="doImport()">🔄 导入粘贴的文本</button>
+          <button class="btn warn sm" onclick="refreshSync()">刷新为当前数据</button>
+        </div>
+        <div class="hint" style="margin-top:8px">仅电脑端：也可点「下载备份文件」存一份 .json 备用（手机微信里请用上方复制/粘贴方式）。</div>
+        <div style="margin-top:6px"><button class="btn warn sm" onclick="exportData()">⬇️ 下载备份文件</button></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+const START='2026-07-29', P1_END='2026-10-04', P2_END='2026-11-29', END_D='2026-12-31', EXAM='2026-12-19';
+const KEY='ielts_wb_v2';
+let S=load();
+function load(){ try{const s=JSON.parse(localStorage.getItem(KEY)); if(s&&s.days)return s;}catch(e){}
+  return {days:{}, tea:[], bank:{}, errors:[], firstUse:todayStr()}; }
+function save(){ localStorage.setItem(KEY, JSON.stringify(S)); }
+function todayStr(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function dateOf(s){return new Date(s+'T00:00:00');}
+function fmt(s){const d=dateOf(s);return (d.getMonth()+1)+'月'+d.getDate()+'日 周'+'日一二三四五六'[d.getDay()];}
+function addDays(s,n){const d=dateOf(s);d.setDate(d.getDate()+n);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function phaseOf(s){return s<=P1_END?1:(s<=P2_END?2:3);}
+const PN={1:'① 基础夯实',2:'② 强化刷题',3:'③ 考前冲刺'};
+
+const RES={
+ vocab:'墨墨背单词/不背单词「雅思核心词汇」词书；通勤即刷',
+ corpus:'王陆807语料库 第3/4/5/11章 + B站搜「王陆 语料库 正确使用方法」',
+ listenC:'每日英语听力APP内置剑桥音频（逐句精听功能）+ B站搜「何琼 雅思听力 网课」',
+ readC:'剑桥真题PDF + B站搜「刘洪波 雅思阅读 公开课」「雅思长难句 精讲」',
+ writeS:'B站搜「Simon 雅思写作 完整课程」+ 顾家北《手把手教你雅思写作》',
+ writeT:'B站搜「雅思小作文 图表 动态图 静态图」',
+ speakQ:'雅思哥APP当季题库 + B站搜「Simon 雅思口语 搬运」「影子跟读 方法」',
+ mock:'剑16–19全套 + 计时器；严格按考试时间 L40min/R60min/W60min'};
+
+function tasksFor(ds){
+  const p=phaseOf(ds), w=dateOf(ds).getDay(), T=[];
+  const A=(c,n,g,t,y,r)=>T.push({c,n,g,t,y,r});
+  if(p===1){
+    A('词汇','早间词汇打卡','新词30个＋复习50个',25,'四级425的最大短板是词汇量，听读写口全被它卡脖子；3500核心词是6.5的地基，碎片时间性价比最高。',RES.vocab);
+    if(w===1){A('听力','语料库听写（第3/4章）','数字、字母、基础名词听写正确率90%+',40,'Section1填空是最稳的送分区，听写解决"听到但写错"的硬伤。',RES.corpus);
+      A('阅读','剑4–9精读1篇','全文无生词障碍＋整理5组同义替换',60,'雅思阅读本质是同义替换游戏，精读期攒下的替换库就是阶段二的提速引擎。',RES.readC);}
+    else if(w===2){A('听力','剑桥S1/S2精听跟读','一句三遍，跟上正常语速',40,'跟读同时训练听力反应和口语语音，一份时间两份收益。',RES.listenC);
+      A('写作','语法纠错专项','消灭时态/主谓一致/从句错误',30,'GRA（语法）是写作四项评分之一，语法硬伤会把分数锁死在5.5。',RES.writeS);
+      A('阅读','长难句拆解3句','30秒内抓出主干',20,'读不懂长难句=定位到了也做不对，这是6分与5.5分的分水岭。',RES.readC);}
+    else if(w===3){A('听力','语料库听写（第5/11章）','场景词反应速度提升',40,'第5/11章覆盖租房、旅游等高频场景，直击Section1-2考点。',RES.corpus);
+      A('阅读','剑4–9精读1篇','同义替换累计新增5组',60,'保持精读节奏，10周约40篇，覆盖80%高频话题背景。',RES.readC);}
+    else if(w===4){A('听力','剑桥S1/S2精听跟读','连读弱读听辨',40,'听不出连读是"单词都认识但听不懂"的元凶。',RES.listenC);
+      A('口语','Part1素材积累2题','每题3句：直答+细节+感受',30,'Part1占口语开局印象分，短句流利比长句卡顿分高。',RES.speakQ);
+      A('阅读','长难句拆解3句','从句嵌套不迷路',20,'每天3句，10周约200句，长难句将不再是障碍。',RES.readC);}
+    else if(w===5){A('听力','语料库错词重听','本周错词清零',40,'听写不复盘=白写，错词才是你的真实词汇缺口。',RES.corpus);
+      A('口语','Part1素材积累3题','本周累计5题入库',30,'当季题库Part1约30题，每周5题正好一个季度全覆盖。',RES.speakQ);
+      A('写作','小作文句型积累','掌握1类图型的趋势/比较句',30,'小作文占写作1/3分数，句型套路化程度最高、最易速成。',RES.writeT);}
+    else if(w===6){A('阅读','剑4–9精读2篇','周末整块时间攻克难篇',90,'周六是唯一整块时间，用来打硬仗性价比最高。',RES.readC);
+      A('写作','小作文仿写1篇','对照范文找差距（写完发我批改）',40,'仿写是从"看得懂"到"写得出"的唯一通道。',RES.writeS);
+      A('口语','本周素材复述录音','脱稿说出本周5题',30,'录音自查是最便宜的口语老师，敢听自己录音就赢了一半。',RES.speakQ);}
+    else{A('词汇','本周错词全量复习','错词本过一遍',40,'记忆曲线第7天是黄金复习点，错过等于重背。',RES.vocab);
+      A('听力','本周听写错误复盘','同类错误归因',40,'把错误归类（拼写/反应/连读）才能定向补弱。',RES.corpus);
+      A('复盘','查看每周复盘','确认下周微调项',15,'工作台已自动生成本周报告，花15分钟校准方向。','总进度页 · 每周复盘板块');}
+  }else if(p===2){
+    A('词汇','早间词汇＋错词本','新词15个＋真题错词复习',25,'刷题期词汇转向"真题里不认识的才是你的词"，效率翻倍。',RES.vocab);
+    if(w===1){A('听力','剑10–15 Section计时','正确率追踪，目标26+/40',40,'计时训练还原考场压力，正确率曲线就是你的成绩预报。',RES.listenC);
+      A('听力','错题精听3遍','听出每个错题的原文原词（错题发我批改）',50,'一篇精听3遍的提升 > 盲刷3篇新题。',RES.listenC);}
+    else if(w===2){A('阅读','计时1篇（20分钟）','限时压力下保准确率',20,'不限时全对没有意义，20分钟/篇才是考场真实节奏。',RES.readC);
+      A('写作','大作文1篇（写完发我批改）','45分钟内完成250词',45,'写作是中国考生最低分项，每周1篇+批改是6.0→6.5的关键投资。',RES.writeS);}
+    else if(w===3){A('听力','Section计时训练','主攻地图题/配对题',40,'S2地图和S3配对是丢分重灾区，专项突破性价比高。',RES.listenC);
+      A('口语','Part2串题1个＋录音','一个素材改编覆盖3道题（可发我修正）',40,'串题让你用4个素材打穿题库，背题量减少70%。',RES.speakQ);}
+    else if(w===4){A('阅读','计时1篇＋复盘','判断题错误归因',40,'TFNG是中国考生错误率最高题型，必须搞清NG的边界。',RES.readC);
+      A('阅读','错题归类＋替换整理','错题按题型入库（发我批改）',40,'错题不归因，刷100篇也是原地踏步。',RES.readC);}
+    else if(w===5){A('听力','Section计时训练','S4讲座题适应',40,'S4无停顿+学术场景，提前适应避免考场懵圈。',RES.listenC);
+      A('写作','小作文1篇（发我批改）','20分钟完成170词',20,'小作文必须压进20分钟，给大作文留足40分钟。',RES.writeT);
+      A('口语','Part2串题1个','新话题入库',20,'保持每周3个话题节奏，一个季度覆盖全题库。',RES.speakQ);}
+    else if(w===6){A('模考','听力+阅读半套联练','连续100分钟专注力训练',100,'考场是3小时连续作战，耐力必须提前储备。',RES.mock);
+      A('口语','Part2话题＋录音','完整2分钟不断流',30,'2分钟说满是Part2的及格线，录音卡表练。',RES.speakQ);
+      A('复盘','本周错题整理入库','错题本更新',40,'周末统一归档，错题本就是你的私人预测卷。','错题复盘页');}
+    else{A('词汇','错词本复习','高频错词清零',30,'错词本是你独一无二的核心资产。',RES.vocab);
+      A('复盘','查看每周复盘','确认下周微调',15,'看数据说话，别凭感觉调计划。','总进度页');
+      A('机动','补齐欠账/休息','写作口语优先补',40,'机动位优先补最容易被跳过的写作口语。','—');}
+  }else{
+    A('词汇','错词本＋好词复习','考前高频错词+写作口语亮点词',20,'冲刺期不背新词，巩固会的比认识新的重要。',RES.vocab);
+    if(w===1){A('听力','模考听力错题精听','上套模考错题全部听懂',50,'冲刺期每个错题都是考场同款陷阱的预演。',RES.listenC);
+      A('口语','当季题库自问自答','1个话题录音15分钟',15,'12月是换题季末尾，题库最稳定，全覆盖正当时。',RES.speakQ);}
+    else if(w===2){A('写作','大作文1篇（发我批改）','用自己的高分句框架',45,'考前保持手感，框架内化到不用想。',RES.writeS);
+      A('口语','当季题库自问自答','1个话题',15,'每天15分钟保持口腔肌肉记忆。',RES.speakQ);}
+    else if(w===3){A('阅读','模考阅读错题复盘','同义替换最后梳理',50,'考前看熟悉的替换库，比做新题安心提分。',RES.readC);
+      A('口语','当季题库自问自答','1个话题',15,'保持节奏。',RES.speakQ);}
+    else if(w===4){A('写作','小作文1篇＋框架内化','各图型模板句最终版',40,'把句框架压缩成考场肌肉记忆。',RES.writeT);
+      A('口语','当季题库自问自答','1个话题',15,'保持节奏。',RES.speakQ);}
+    else if(w===5){A('听力','薄弱题型专项','按周复盘指出的短板练',40,'最后的定向补弱窗口。',RES.listenC);
+      A('口语','当季题库自问自答','1个话题',15,'保持节奏。',RES.speakQ);}
+    else if(w===6){A('模考','全真模考一套（剑16–19）','听阅写连做，严格计时',170,'全真模考的分数±0.5就是你的考场成绩，用它校准预期。',RES.mock);}
+    else{A('模考','模考对分＋错题归因','三科错题全归档',60,'模考不复盘等于白考。',RES.mock);
+      A('复盘','查看每周复盘','考前节奏微调',15,'考前一周记得降量保状态。','总进度页');}
+  }
+  return T;
+}
+
+function dayRec(ds){ if(!S.days[ds]) S.days[ds]={st:{},settled:false,result:null,mins:0}; return S.days[ds]; }
+function stat(ds,i){ return dayRec(ds).st[i]||0; }
+function allDone(ds){ const t=tasksFor(ds),r=dayRec(ds); return t.every((_,i)=>r.st[i]===2); }
+function doneCount(ds){ const t=tasksFor(ds),r=dayRec(ds); return t.filter((_,i)=>r.st[i]===2).length; }
+function doneMins(ds){ const t=tasksFor(ds),r=dayRec(ds); return t.reduce((s,tk,i)=>s+(r.st[i]===2?tk.t:0),0); }
+
+function teaTotal(){ return S.tea.length? S.tea[S.tea.length-1].total : 0; }
+function teaText(th){ const neg=th<0; th=Math.abs(th); const w=Math.floor(th/3), r=th%3;
+  let s=(neg?'−':'')+(w||!r?w:'')+(r?(w?' ':'')+['','⅓','⅔'][r]:''); return s+' 杯'; }
+
+function settle(ds){
+  const r=dayRec(ds); if(r.settled) return;
+  const ok=allDone(ds);
+  r.settled=true; r.result=ok?'ok':'miss'; r.mins=doneMins(ds);
+  const delta=ok?1:-1;
+  S.tea.push({d:ds,desc:ok?'任务全部完成 · 奖励⅓杯':'任务未完成 · 扣除⅓杯',delta,total:teaTotal()+delta});
+  save();
+}
+function autoSettle(){
+  const t=todayStr(); let d=S.firstUse<START?START:S.firstUse;
+  while(d<t&&d<=END_D){ settle(d); d=addDays(d,1); }
+}
+function settleToday(){
+  const t=todayStr(), r=dayRec(t);
+  if(r.settled) return;
+  if(!allDone(t)){ if(!confirm('还有任务未完成，现在结算将按"未完成"扣⅓杯奶茶。\n确定现在结算吗？（可以晚上学完再来）')) return; }
+  settle(t); renderAll();
+}
+function resetToday(){
+  const t=todayStr(), r=dayRec(t);
+  if(!confirm('重置今日：清空今天所有加入/打卡状态'+(r.settled?'，并撤销今日的奶茶结算':'')+'。确定？')) return;
+  if(r.settled){
+    const i=S.tea.map(e=>e.d).lastIndexOf(t);
+    if(i>-1){ S.tea.splice(i,1); let run=0; S.tea.forEach(e=>{run+=e.delta;e.total=run;}); }
+  }
+  S.days[t]={st:{},settled:false,result:null,mins:0}; save(); renderAll();
+}
+
+function streak(){
+  let n=0,d=todayStr();
+  if(S.days[d]&&S.days[d].settled&&S.days[d].result==='ok')n++;
+  d=addDays(d,-1);
+  while(S.days[d]&&S.days[d].settled){ if(S.days[d].result==='ok'){n++;d=addDays(d,-1);} else break; }
+  return n;
+}
+
+function renderTop(){
+  const t=todayStr(), tasks=tasksFor(t), dc=doneCount(t);
+  document.getElementById('tbDate').textContent=fmt(t)+' · '+PN[phaseOf(t)];
+  document.getElementById('tbNum').textContent=dc+'/'+tasks.length;
+  document.getElementById('tbBar').style.width=(tasks.length?dc/tasks.length*100:0)+'%';
+  document.getElementById('teaBig').innerHTML=teaText(teaTotal())+' <small>累计</small>';
+  const r=dayRec(t);
+  document.getElementById('teaToday').textContent= r.settled?(r.result==='ok'?'今日已+⅓杯 🎉':'今日已−⅓杯'):'今日待结算';
+  const fl=document.getElementById('teaFlow'); fl.innerHTML='';
+  if(!S.tea.length) fl.innerHTML='<div class="hint">暂无奶茶流水，今天完成打卡赚第一个⅓杯！</div>';
+  [...S.tea].reverse().slice(0,30).forEach(e=>{
+    fl.innerHTML+='<div class="fr"><span>'+fmt(e.d)+' '+e.desc+'</span><span class="'+(e.delta>0?'plus':'minus')+'">'+(e.delta>0?'+⅓':'−⅓')+'</span></div>';
+  });
+}
+
+function renderDaily(){
+  const t=todayStr(), p=phaseOf(t), tasks=tasksFor(t), r=dayRec(t);
+  document.getElementById('dTitle').textContent='今日学习计划 · '+fmt(t);
+  document.getElementById('dNote').textContent={1:'基础夯实期：词汇打底＋听写训练＋精读长难句，出口目标5.5。任务已按你的作息排好：早通勤/午休/晚间各一段。',2:'强化刷题期：剑10–15计时训练＋每周2篇写作批改，出口目标6.0。',3:'考前冲刺期：周末全真模考＋工作日错题复盘，12月中旬考试，考前一周记得降量。'}[p];
+  const el=document.getElementById('cards'); el.innerHTML='';
+  tasks.forEach((tk,i)=>{
+    const st=r.st[i]||0;
+    const card=document.createElement('div');
+    card.className='tcard'+(st===2?' done':st===1?' joined':'');
+    let btns='';
+    if(r.settled){ btns='<span class="stamp">'+(st===2?'✅ 已完成':'⏸ 未完成')+'（已结算）</span>'; }
+    else if(st===0){ btns='<button class="btn sm" onclick="joinTask('+i+')">＋ 加入计划</button>'; }
+    else if(st===1){ btns='<button class="btn sm" onclick="doneTask('+i+')">✅ 完成打卡</button><button class="btn warn sm" onclick="unjoinTask('+i+')">移出</button>'; }
+    else{ btns='<span class="stamp">✅ 已打卡</span><button class="btn warn sm" onclick="undoTask('+i+')">撤销</button>'; }
+    card.innerHTML=
+      '<div class="thead"><span class="tno">'+String(i+1).padStart(2,'0')+'</span><span class="tname">'+tk.n+'</span><span class="ttag tag-'+tk.c+'">'+tk.c+'</span></div>'+
+      '<div class="trow">🎯 目标：'+tk.g+'　·　⏱ 预计 '+tk.t+' 分钟</div>'+
+      '<div class="twhy">💡 为什么重点学：'+tk.y+'</div>'+
+      '<div class="tres" id="res'+i+'">📚 配套资源：'+tk.r+'</div>'+
+      '<div class="tbtns">'+btns+'<button class="btn ghost sm" onclick="toggleRes('+i+')">查看配套学习资料</button></div>';
+    el.appendChild(card);
+  });
+  const btn=document.getElementById('settleBtn'), sn=document.getElementById('settleNote');
+  if(r.settled){ btn.disabled=true; sn.innerHTML=r.result==='ok'?'<span class="chip ok">今日达标 +⅓杯奶茶 🥤</span>':'<span class="chip miss">今日未完成 −⅓杯</span>'; }
+  else{ btn.disabled=false; sn.textContent=allDone(t)?'全部完成！结算领取⅓杯奶茶 🥤':'今日已学 '+doneMins(t)+' 分钟'; }
+}
+function joinTask(i){ dayRec(todayStr()).st[i]=1; save(); renderAll(); }
+function unjoinTask(i){ dayRec(todayStr()).st[i]=0; save(); renderAll(); }
+function doneTask(i){ dayRec(todayStr()).st[i]=2; save(); renderAll(); }
+function undoTask(i){ dayRec(todayStr()).st[i]=1; save(); renderAll(); }
+function toggleRes(i){ document.getElementById('res'+i).classList.toggle('show'); }
+
+function renderBank(){
+  const el=document.getElementById('bankGrid'); el.innerHTML='';
+  for(let b=4;b<=19;b++){
+    const ph=b<=9?'阶段一':(b<=15?'阶段二':'阶段三');
+    let cells='';
+    for(let tn=1;tn<=4;tn++){
+      const k='C'+b+'T'+tn, s=S.bank[k]||0;
+      cells+='<span class="tcell s'+s+'" onclick="cycleBank(\''+k+'\')">T'+tn+'</span>';
+    }
+    el.innerHTML+='<div class="book"><b>剑'+b+'</b><span class="ph">'+ph+'</span><div>'+cells+'</div></div>';
+  }
+}
+function cycleBank(k){ S.bank[k]=((S.bank[k]||0)+1)%3; save(); renderBank(); }
+
+function addErr(){
+  const txt=document.getElementById('eTxt').value.trim();
+  if(!txt){ alert('先填写错题内容'); return; }
+  S.errors.unshift({d:todayStr(),sub:document.getElementById('eSub').value,src:document.getElementById('eSrc').value.trim(),txt});
+  document.getElementById('eTxt').value=''; document.getElementById('eSrc').value='';
+  save(); renderErr();
+}
+function delErr(i){ if(confirm('删除这条错题记录？')){ S.errors.splice(i,1); save(); renderErr(); } }
+function renderErr(){
+  const el=document.getElementById('errList'); el.innerHTML='';
+  if(!S.errors.length){ el.innerHTML='<div class="hint" style="padding:4px">错题本还是空的。做题后把错题登记在这里，或直接发我批改后回填结论。</div>'; return; }
+  S.errors.forEach((e,i)=>{
+    el.innerHTML+='<div class="err"><div class="eh"><span><span class="ttag tag-'+e.sub+'">'+e.sub+'</span> '+(e.src||'')+'</span><span>'+fmt(e.d)+' <a href="javascript:delErr('+i+')" style="color:var(--muted)">删除</a></span></div><div style="font-size:13px;white-space:pre-wrap">'+e.txt.replace(/</g,'&lt;')+'</div></div>';
+  });
+}
+
+const SUGG={
+ '词汇':'词汇完成率最低：把背词固定在通勤时段，单日量可降到20个，连续性比单日量重要。',
+ '听力':'听力薄弱：下周语料库听写提为每日必做，精听改"一句三遍"；把错题发我批改，定位是词汇、连读还是场景问题。',
+ '阅读':'阅读薄弱：下周先补长难句（每天5句）再精读；错题发我分析是定位问题还是同义替换没认出。',
+ '写作':'写作薄弱：固定周二/周五晚为写作时间，写完立即发我批改；动笔前先看Simon对应题型范文降低启动难度。',
+ '口语':'口语最容易被跳过：改为每天午饭后15分钟固定录音；录音转文字发我，我帮你修成可复用素材。',
+ '模考':'模考未完成：提前一晚备好试题和计时器；周六有事就挪周日上午，不要取消。',
+ '复盘':'复盘被跳过：周日晚15分钟看总进度页即可，无需额外写东西。',
+ '机动':'机动时间未利用：优先补写作和口语，这两项最容易欠账。'};
+
+function weekRanges(){
+  const t=todayStr(), first=S.firstUse<START?START:S.firstUse;
+  const off=(dateOf(first).getDay()+6)%7;
+  let ws=addDays(first,-off); const out=[];
+  while(ws<=t){ out.push([ws,addDays(ws,6)]); ws=addDays(ws,7); }
+  return out.reverse();
+}
+function renderReview(){
+  const el=document.getElementById('reviewList'); el.innerHTML='';
+  const t=todayStr();
+  weekRanges().forEach(([ws,we],idx)=>{
+    const cats={}; let total=0,done=0,okD=0,setD=0,mins=0;
+    for(let d=ws;d<=we;d=addDays(d,1)){
+      if(d>t||d<S.firstUse) continue;
+      const tasks=tasksFor(d), r=S.days[d]||{st:{},settled:false};
+      tasks.forEach((tk,i)=>{ cats[tk.c]=cats[tk.c]||[0,0]; cats[tk.c][1]++; total++;
+        if(r.st&&r.st[i]===2){cats[tk.c][0]++; done++; mins+=tk.t;} });
+      if(r.settled){setD++; if(r.result==='ok')okD++;}
+    }
+    if(!total) return;
+    const rate=Math.round(done/total*100);
+    let weak=null,wr=101;
+    for(const c in cats){ const rt=cats[c][0]/cats[c][1]*100; if(cats[c][1]>=2&&rt<wr){wr=rt;weak=c;} }
+    let tags=''; for(const c in cats){ const rt=Math.round(cats[c][0]/cats[c][1]*100); tags+='<span class="tagw'+(rt>=80?' good':'')+'">'+c+' '+rt+'%</span>'; }
+    let h='<div class="week"><div style="font-weight:600;margin-bottom:6px">'+fmt(ws)+' – '+fmt(we)+(idx===0?'（本周·实时）':'')+'</div>';
+    h+='<div style="font-size:13px">总完成率 <b>'+rate+'%</b> · 达标 '+okD+'/'+setD+' 天 · 学习 '+(mins/60).toFixed(1)+' 小时</div>';
+    h+='<div style="margin-top:6px">'+tags+'</div>';
+    if(weak&&wr<80) h+='<div class="sugg">📌 薄弱项【'+weak+'】完成率'+Math.round(wr)+'% —— '+(SUGG[weak]||'下周优先安排。')+'</div>';
+    else if(rate>=80) h+='<div class="sugg" style="background:var(--green-l);color:#204A38">👍 本周执行到位，维持节奏；有余力可把口语录音加到20分钟。</div>';
+    el.innerHTML+=h+'</div>';
+  });
+  if(!el.innerHTML) el.innerHTML='<div class="hint">积累打卡数据后自动生成。</div>';
+}
+
+function renderProg(){
+  const t=todayStr();
+  document.getElementById('pDays').textContent=Math.max(0,Math.round((dateOf(EXAM)-dateOf(t))/864e5))+'天';
+  const ds=Object.keys(S.days).filter(d=>S.days[d].settled);
+  document.getElementById('pTotal').textContent=ds.length+'天';
+  const ok=ds.filter(d=>S.days[d].result==='ok').length;
+  document.getElementById('pRate').textContent=ds.length?Math.round(ok/ds.length*100)+'%':'–';
+  let mins=0; Object.keys(S.days).forEach(d=>{ mins+= S.days[d].settled? (S.days[d].mins||0) : doneMins(d); });
+  document.getElementById('pMins').textContent=(mins/60).toFixed(1)+'h';
+  document.getElementById('pStreak').textContent=streak()+'天';
+  const pr=document.getElementById('phaseRow'); const cur=phaseOf(t);
+  pr.innerHTML=[[1,'7.29–10.4','词汇+精听+长难句 · 出口5.5'],[2,'10.5–11.29','剑桥计时刷题+写作批改 · 出口6.0'],[3,'11.30–12.31','全真模考+错题复盘 · 目标6.5']]
+    .map(([p,d,g])=>'<div class="phase'+(p===cur?' cur':'')+'"><b>'+PN[p]+(p===cur?' · 进行中':'')+'</b><div class="pd">'+d+'</div><div style="font-size:12.5px">'+g+'</div></div>').join('');
+  const hl=document.getElementById('histList'); hl.innerHTML='';
+  const days=Object.keys(S.days).sort().reverse();
+  if(!days.length) hl.innerHTML='<div class="hint">还没有记录，今天开始打卡吧。</div>';
+  days.slice(0,30).forEach(ds2=>{
+    const r=S.days[ds2], tasks=tasksFor(ds2), dc=doneCount(ds2);
+    const chip=r.settled?(r.result==='ok'?'<span class="chip ok">达标 +⅓🥤</span>':'<span class="chip miss">未完成 −⅓🥤</span>'):'<span class="chip wait">进行中</span>';
+    hl.innerHTML+='<div class="dayrow"><span>'+fmt(ds2)+'</span><span>'+dc+'/'+tasks.length+' 项 · '+(r.settled?(r.mins||0):doneMins(ds2))+'分钟 '+chip+'</span></div>';
+  });
+  refreshSync();
+}
+
+function renderAll(){ renderTop(); renderDaily(); renderBank(); renderErr(); renderReview(); renderProg(); }
+
+function exportData(){
+  const a=document.createElement('a');
+  a.href='data:application/json;charset=utf-8,'+encodeURIComponent(JSON.stringify(S,null,2));
+  a.download='ielts_backup_'+todayStr()+'.json'; a.click();
+}
+function syncText(){ return JSON.stringify(S,null,2); }
+function refreshSync(){ const ta=document.getElementById('syncBox'); if(ta) ta.value=syncText(); }
+function copyBackup(){
+  const ta=document.getElementById('syncBox'); ta.value=syncText(); ta.focus(); ta.select();
+  let ok=false;
+  try{ ok=document.execCommand('copy'); }catch(e){}
+  if(!ok && navigator.clipboard){ navigator.clipboard.writeText(ta.value).catch(()=>{}); }
+  alert(ok?'已复制备份文本！\n下一步：用微信把这段发给自己，手机打开本页后粘贴到框里点「导入」。':'复制失败，请手动长按文本框全选复制。');
+}
+function doImport(){
+  const ta=document.getElementById('syncBox'); const raw=ta.value.trim();
+  if(!raw){ alert('请先在框内粘贴备份文本'); return; }
+  try{ const s=JSON.parse(raw);
+    if(s&&s.days&&s.tea){ if(!confirm('导入将覆盖当前设备数据，确定继续？')) return; S=s; save(); renderAll(); alert('导入成功，数据与另一台设备已同步 🎉'); }
+    else alert('文本格式不正确（缺少 days/tea 字段）'); }
+  catch(e){ alert('解析失败，请确认已完整粘贴 JSON 文本'); }
+}
+
+document.querySelectorAll('.nav').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.nav').forEach(x=>x.classList.remove('on'));
+  document.querySelectorAll('.view').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');
+  document.getElementById('v-'+b.dataset.v).classList.add('on');
+});
+
+(function migrate(){
+  try{ const old=JSON.parse(localStorage.getItem('ielts_wb_v1'));
+    if(old&&old.days&&!Object.keys(S.days).length&&!S.tea.length){
+      S.firstUse=old.firstUse||S.firstUse;
+      Object.keys(old.days).forEach(d=>{ const o=old.days[d]; const st={};
+        Object.keys(o.checks||{}).forEach(k=>{ if(o.checks[k]) st[k]=2; });
+        S.days[d]={st,settled:!!o.settled,result:o.result||null,mins:0}; });
+      (old.ledger||[]).forEach(e=>{ const delta=e.amt>0?1:-1;
+        S.tea.push({d:e.d,desc:delta>0?'任务全部完成 · 奖励⅓杯':'任务未完成 · 扣除⅓杯',delta,total:teaTotal()+delta}); });
+      save();
+    }
+  }catch(e){}
+})();
+autoSettle();
+renderAll();
+</script>
+</body>
+</html>
