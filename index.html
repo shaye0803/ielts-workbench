@@ -61,6 +61,8 @@ h2.sec{font-size:16px;font-weight:600;color:var(--green-deep);margin:6px 0 12px}
 .twhy{background:var(--amber-l);border-radius:10px;padding:9px 12px;font-size:12.5px;color:#6B4A10;margin-top:9px}
 .tres{background:var(--green-l);border-radius:10px;padding:9px 12px;font-size:12.5px;color:#204A38;margin-top:8px;display:none}
 .tres.show{display:block}
+.tres a{color:var(--green-deep);text-decoration:none;border-bottom:1.5px solid var(--green-mid);font-weight:500;white-space:nowrap}
+.tres a:hover{border-bottom-color:var(--green-deep);text-decoration:none}
 .tbtns{display:flex;gap:10px;margin-top:12px}
 .stamp{font-size:12px;color:var(--green-mid);font-weight:600}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
@@ -277,14 +279,14 @@ function phaseOf(s){return s<=P1_END?1:(s<=P2_END?2:3);}
 const PN={1:'① 基础夯实',2:'② 强化刷题',3:'③ 考前冲刺'};
 
 const RES={
- vocab:'墨墨背单词/不背单词「雅思核心词汇」词书；通勤即刷',
- corpus:'王陆807语料库 第3/4/5/11章 + B站搜「王陆 语料库 正确使用方法」',
- listenC:'每日英语听力APP内置剑桥音频（逐句精听功能）+ B站搜「何琼 雅思听力 网课」',
- readC:'剑桥真题PDF + B站搜「刘洪波 雅思阅读 公开课」「雅思长难句 精讲」',
- writeS:'B站搜「Simon 雅思写作 完整课程」+ 顾家北《手把手教你雅思写作》',
- writeT:'B站搜「雅思小作文 图表 动态图 静态图」',
- speakQ:'雅思哥APP当季题库 + B站搜「Simon 雅思口语 搬运」「影子跟读 方法」',
- mock:'剑16–19全套 + 计时器；严格按考试时间 L40min/R60min/W60min'};
+ vocab:'<a href="https://www.maimemo.com" target="_blank">墨墨背单词</a> / <a href="https://www.beibuword.com" target="_blank">不背单词</a> → 搜「雅思核心词汇」词书，通勤即刷',
+ corpus:'<a href="https://search.bilibili.com/all?keyword=%E7%8E%8B%E9%99%86%20807%20%E8%AF%AD%E6%96%99%E5%BA%93%20%E6%AD%A3%E7%A1%AE%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95" target="_blank">📺 王陆807语料库 正确使用方法（B站搜索）</a>',
+ listenC:'<a href="https://search.bilibili.com/all?keyword=%E4%BD%95%E7%90%BC%20%E9%9B%85%E6%80%9D%E5%90%AC%E5%8A%9B%20%E7%BD%91%E8%AF%BE" target="_blank">📺 何琼 雅思听力 网课（B站搜索）</a> · <a href="https://www.dailyyingyu.com/app" target="_blank">每日英语听力APP</a>（内置剑桥音频+逐句精听）',
+ readC:'<a href="https://search.bilibili.com/all?keyword=%E5%88%98%E6%B4%AA%E6%B3%A2%20%E9%9B%85%E6%80%9D%E9%98%85%E8%AF%BB%20%E5%85%AC%E5%BC%80%E8%AF%BE" target="_blank">📺 刘洪波 雅思阅读 公开课（B站搜索）</a> · <a href="https://search.bilibili.com/all?keyword=%E9%9B%85%E6%80%9D%E9%95%BF%E9%9A%BE%E5%8F%A5%20%E7%B2%BE%E8%AE%B2" target="_blank">📺 雅思长难句 精讲（B站搜索）</a> · <a href="https://pan.baidu.com/s/1iQZqYJQ?pwd=ielts" target="_blank">⬇️ 剑桥真题4-19 PDF合集（网盘）</a>',
+ writeS:'<a href="https://search.bilibili.com/all?keyword=Simon%20%E9%9B%85%E6%80%9D%E5%86%99%E4%BD%9C%20%E5%AE%8C%E6%95%B4%E8%AF%BE%E7%A8%8B" target="_blank">📺 Simon 雅思写作 完整课程（B站搜索）</a> · <a href="https://book.douban.com/subject/25777448/" target="_blank">📖 顾家北《手把手教你雅思写作》（豆瓣）</a>',
+ writeT:'<a href="https://search.bilibili.com/all?keyword=%E9%9B%85%E6%80%9D%E5%B0%8F%E4%BD%9C%E6%96%87%20%E5%9B%BE%E8%A1%A8%20%E5%8A%A8%E6%80%81%E5%9B%BE%20%E9%9D%99%E6%80%81%E5%9B%BE" target="_blank">📺 雅思小作文 图表 动态图 静态图（B站搜索）</a>',
+ speakQ:'<a href="https://app.ieltsbro.com/" target="_blank">📱 雅思哥APP 当季题库</a> · <a href="https://search.bilibili.com/all?keyword=Simon%20%E9%9B%85%E6%80%9D%E5%8F%A3%E8%AF%AD%20%E6%90%AC%E8%BF%90" target="_blank">📺 Simon 雅思口语 搬运（B站搜索）</a> · <a href="https://search.bilibili.com/all?keyword=%E5%BD%B1%E5%AD%90%E8%B7%AF%E8%AF%BB%20%E6%96%B9%E6%B3%95" target="_blank">📺 影子跟读 方法（B站搜索）</a>',
+ mock:'<a href="https://pan.baidu.com/s/1iQZqYJQ?pwd=ielts" target="_blank">⬇️ 剑16–19 全套PDF（网盘）</a> · <a href="https://www.google.com/search?q=%E9%9B%85%E6%80%9D%E8%80%83%E8%AF%95+%E8%AE%A1%E6%97%B6%E5%99%A8" target="_blank">⏱️ 在线计时器</a>'};
 
 function tasksFor(ds){
   const p=phaseOf(ds), w=dateOf(ds).getDay(), T=[];
