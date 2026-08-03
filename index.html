@@ -42,6 +42,12 @@ body{background:var(--cream);color:var(--ink);font-size:14px;line-height:1.65}
 .tea .rule{font-size:12px;color:var(--muted);margin-top:2px}
 .tea .flow{flex:1;min-width:220px;max-height:96px;overflow-y:auto;font-size:12.5px;border-left:1px dashed var(--line);padding-left:16px}
 .tea .flow .fr{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px dotted #F0EADC}
+.bdet{margin-top:8px;font-size:12.5px}
+.bdet summary{cursor:pointer;color:var(--green-deep);font-weight:500;user-select:none}
+.bdet summary::-webkit-details-marker{color:var(--green-mid)}
+.bdet-c{background:var(--green-l);border-radius:10px;padding:9px 12px;margin-top:6px;color:#204A38}
+.bdet-c ul{padding-left:18px;margin:4px 0}
+.bdet-c li{margin:3px 0}
 .plus{color:var(--green-mid);font-weight:600}.minus{color:var(--red);font-weight:600}
 .view{display:none}.view.on{display:block}
 h2.sec{font-size:16px;font-weight:600;color:var(--green-deep);margin:6px 0 12px}
@@ -126,19 +132,11 @@ textarea{width:100%;min-height:74px;resize:vertical}
     </div>
 
     <div class="tea">
-      <svg class="cup" width="74" height="92" viewBox="0 0 74 92" role="img"><title>喜茶风果茶杯</title>
-        <path d="M14 22 L60 22 L54 84 Q53 89 47 89 L27 89 Q21 89 20 84 Z" fill="#FDF3E3" stroke="#C98A2D" stroke-width="2"/>
-        <path d="M16 44 L58 44 L54 84 Q53 89 47 89 L27 89 Q21 89 20 84 Z" fill="#F6C34C" opacity="0.85"/>
-        <circle cx="30" cy="58" r="5" fill="#E8833A"/><circle cx="44" cy="66" r="6" fill="#D94F3D"/>
-        <circle cx="38" cy="52" r="4" fill="#F19B4B"/><circle cx="28" cy="74" r="4.5" fill="#C93C4F"/>
-        <ellipse cx="37" cy="22" rx="25" ry="5" fill="#FFF9EE" stroke="#C98A2D" stroke-width="2"/>
-        <rect x="40" y="2" width="6" height="24" rx="3" fill="#2E7D5B" transform="rotate(8 43 14)"/>
-        <path d="M24 30 Q37 35 50 30" stroke="#EAD9B8" stroke-width="2" fill="none"/>
-      </svg>
+      <div style="font-size:46px;line-height:1">💰</div>
       <div>
-        <div class="hint">🥤 奶茶奖励池 · 攒满就去喜茶兑现</div>
-        <div class="big" id="teaBig">0 杯</div>
-        <div class="rule">✅ 当日任务全完成 +⅓杯 ｜ ❌ 未完成 −⅓杯 ｜ <span id="teaToday"></span></div>
+        <div class="hint">奖惩账本 · 完成奖励 / 未完成扣款，余额自动累计</div>
+        <div class="big" id="teaBig">0 元</div>
+        <div class="rule">✅ 当日任务全完成 +20元 ｜ ❌ 未完成 −20元 ｜ <span id="teaToday"></span></div>
       </div>
       <div class="flow" id="teaFlow"></div>
     </div>
@@ -148,10 +146,10 @@ textarea{width:100%;min-height:74px;resize:vertical}
       <div class="hint" id="dNote" style="margin-bottom:12px"></div>
       <div id="cards"></div>
       <div style="display:flex;gap:10px;align-items:center;margin-top:14px">
-        <button class="btn" id="settleBtn" onclick="settleToday()">🥤 今日打卡结算</button>
+        <button class="btn" id="settleBtn" onclick="settleToday()">💰 今日打卡结算</button>
         <span id="settleNote" class="hint"></span>
       </div>
-      <div class="hint" style="margin-top:8px">流程：每张卡片先点「＋加入计划」→ 学完点「✅ 完成打卡」→ 全部完成后结算领奶茶。漏结算的历史日期会自动按实际情况补记。</div>
+      <div class="hint" style="margin-top:8px">流程：每张卡片先点「＋加入计划」→ 学完点「✅ 完成打卡」→ 全部完成后结算领20元奖励。漏结算的历史日期会自动按实际情况补记。</div>
     </section>
 
     <section class="view" id="v-idea">
@@ -253,7 +251,7 @@ textarea{width:100%;min-height:74px;resize:vertical}
       <div class="hint" style="margin-bottom:10px">每周一至周日为一个周期，按五项能力统计完成率，自动识别薄弱项并给出下周微调建议。</div>
       <div id="reviewList"></div>
       <div class="panel" style="margin-top:16px;border:1.5px solid var(--green)"><h3>🔄 多设备数据同步（微信可用）</h3>
-        <div class="hint" style="margin-bottom:10px">电脑与手机共用同一份打卡/奶茶数据：① 在电脑点「📋 复制备份文本」→ ② 用微信把文本<b>发给自己</b> → ③ 手机打开本页，把文本粘贴到下框，点「🔄 导入」即可无缝衔接。</div>
+        <div class="hint" style="margin-bottom:10px">电脑与手机共用同一份打卡/奖惩数据：① 在电脑点「📋 复制备份文本」→ ② 用微信把文本<b>发给自己</b> → ③ 手机打开本页，把文本粘贴到下框，点「🔄 导入」即可无缝衔接。</div>
         <textarea id="syncBox" placeholder="这里会显示当前备份文本；导入时把另一台设备的备份文本粘贴到这里。" style="width:100%;height:130px;font-size:12px;border:1px solid var(--line);border-radius:10px;padding:10px;resize:vertical;font-family:inherit;color:var(--ink)"></textarea>
         <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
           <button class="btn sm" onclick="copyBackup()">📋 复制备份文本</button>
@@ -272,7 +270,7 @@ const START='2026-07-29', P1_END='2026-10-04', P2_END='2026-11-29', END_D='2026-
 const KEY='ielts_wb_v2';
 let S=load();
 function load(){ try{const s=JSON.parse(localStorage.getItem(KEY)); if(s&&s.days)return s;}catch(e){}
-  return {days:{}, tea:[], bank:{}, errors:[], firstUse:todayStr()}; }
+  return {days:{}, money:[], bank:{}, errors:[], firstUse:todayStr()}; }
 function save(){ localStorage.setItem(KEY, JSON.stringify(S)); }
 function todayStr(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 function dateOf(s){return new Date(s+'T00:00:00');}
@@ -359,16 +357,15 @@ function allDone(ds){ const t=tasksFor(ds),r=dayRec(ds); return t.every((_,i)=>r
 function doneCount(ds){ const t=tasksFor(ds),r=dayRec(ds); return t.filter((_,i)=>r.st[i]===2).length; }
 function doneMins(ds){ const t=tasksFor(ds),r=dayRec(ds); return t.reduce((s,tk,i)=>s+(r.st[i]===2?tk.t:0),0); }
 
-function teaTotal(){ return S.tea.length? S.tea[S.tea.length-1].total : 0; }
-function teaText(th){ const neg=th<0; th=Math.abs(th); const w=Math.floor(th/3), r=th%3;
-  let s=(neg?'−':'')+(w||!r?w:'')+(r?(w?' ':'')+['','⅓','⅔'][r]:''); return s+' 杯'; }
+function moneyTotal(){ return S.money.length? S.money[S.money.length-1].total : 0; }
+function moneyText(mh){ const neg=mh<0; mh=Math.abs(mh); return (neg?'−':'')+mh+' 元'; }
 
 function settle(ds){
   const r=dayRec(ds); if(r.settled) return;
   const ok=allDone(ds);
   r.settled=true; r.result=ok?'ok':'miss'; r.mins=doneMins(ds);
-  const delta=ok?1:-1;
-  S.tea.push({d:ds,desc:ok?'任务全部完成 · 奖励⅓杯':'任务未完成 · 扣除⅓杯',delta,total:teaTotal()+delta});
+  const delta=ok?20:-20;
+  S.money.push({d:ds,desc:ok?'任务全部完成 · 奖励20元':'任务未完成 · 扣除20元',delta,total:moneyTotal()+delta});
   save();
 }
 function autoSettle(){
@@ -378,15 +375,15 @@ function autoSettle(){
 function settleToday(){
   const t=todayStr(), r=dayRec(t);
   if(r.settled) return;
-  if(!allDone(t)){ if(!confirm('还有任务未完成，现在结算将按"未完成"扣⅓杯奶茶。\n确定现在结算吗？（可以晚上学完再来）')) return; }
+  if(!allDone(t)){ if(!confirm('还有任务未完成，现在结算将按"未完成"扣20元。\n确定现在结算吗？（可以晚上学完再来）')) return; }
   settle(t); renderAll();
 }
 function resetToday(){
   const t=todayStr(), r=dayRec(t);
-  if(!confirm('重置今日：清空今天所有加入/打卡状态'+(r.settled?'，并撤销今日的奶茶结算':'')+'。确定？')) return;
+  if(!confirm('重置今日：清空今天所有加入/打卡状态'+(r.settled?'，并撤销今日的奖惩结算':'')+'。确定？')) return;
   if(r.settled){
-    const i=S.tea.map(e=>e.d).lastIndexOf(t);
-    if(i>-1){ S.tea.splice(i,1); let run=0; S.tea.forEach(e=>{run+=e.delta;e.total=run;}); }
+    const i=S.money.map(e=>e.d).lastIndexOf(t);
+    if(i>-1){ S.money.splice(i,1); let run=0; S.money.forEach(e=>{run+=e.delta;e.total=run;}); }
   }
   S.days[t]={st:{},settled:false,result:null,mins:0}; save(); renderAll();
 }
@@ -404,13 +401,13 @@ function renderTop(){
   document.getElementById('tbDate').textContent=fmt(t)+' · '+PN[phaseOf(t)];
   document.getElementById('tbNum').textContent=dc+'/'+tasks.length;
   document.getElementById('tbBar').style.width=(tasks.length?dc/tasks.length*100:0)+'%';
-  document.getElementById('teaBig').innerHTML=teaText(teaTotal())+' <small>累计</small>';
+  document.getElementById('teaBig').innerHTML=moneyText(moneyTotal())+' <small>累计</small>';
   const r=dayRec(t);
-  document.getElementById('teaToday').textContent= r.settled?(r.result==='ok'?'今日已+⅓杯 🎉':'今日已−⅓杯'):'今日待结算';
+  document.getElementById('teaToday').textContent= r.settled?(r.result==='ok'?'今日已+20元 🎉':'今日已−20元'):'今日待结算';
   const fl=document.getElementById('teaFlow'); fl.innerHTML='';
-  if(!S.tea.length) fl.innerHTML='<div class="hint">暂无奶茶流水，今天完成打卡赚第一个⅓杯！</div>';
-  [...S.tea].reverse().slice(0,30).forEach(e=>{
-    fl.innerHTML+='<div class="fr"><span>'+fmt(e.d)+' '+e.desc+'</span><span class="'+(e.delta>0?'plus':'minus')+'">'+(e.delta>0?'+⅓':'−⅓')+'</span></div>';
+  if(!S.money.length) fl.innerHTML='<div class="hint">暂无收支流水，今天完成打卡赚第一笔20元！</div>';
+  [...S.money].reverse().slice(0,30).forEach(e=>{
+    fl.innerHTML+='<div class="fr"><span>'+fmt(e.d)+' '+e.desc+'</span><span class="'+(e.delta>0?'plus':'minus')+'">'+(e.delta>0?'+20':'−20')+'</span></div>';
   });
 }
 
@@ -437,8 +434,8 @@ function renderDaily(){
     el.appendChild(card);
   });
   const btn=document.getElementById('settleBtn'), sn=document.getElementById('settleNote');
-  if(r.settled){ btn.disabled=true; sn.innerHTML=r.result==='ok'?'<span class="chip ok">今日达标 +⅓杯奶茶 🥤</span>':'<span class="chip miss">今日未完成 −⅓杯</span>'; }
-  else{ btn.disabled=false; sn.textContent=allDone(t)?'全部完成！结算领取⅓杯奶茶 🥤':'今日已学 '+doneMins(t)+' 分钟'; }
+  if(r.settled){ btn.disabled=true; sn.innerHTML=r.result==='ok'?'<span class="chip ok">今日达标 +20元 💰</span>':'<span class="chip miss">今日未完成 −20元</span>'; }
+  else{ btn.disabled=false; sn.textContent=allDone(t)?'全部完成！结算领取20元奖励 💰':'今日已学 '+doneMins(t)+' 分钟'; }
 }
 function joinTask(i){ dayRec(todayStr()).st[i]=1; save(); renderAll(); }
 function unjoinTask(i){ dayRec(todayStr()).st[i]=0; save(); renderAll(); }
@@ -450,13 +447,24 @@ function renderBank(){
   const el=document.getElementById('bankGrid'); el.innerHTML='';
   for(let b=4;b<=19;b++){
     const ph=b<=9?'阶段一':(b<=15?'阶段二':'阶段三');
+    const note = b<=9?'非计时精听精读，重点练 Section1/2 填空与同义替换'
+                 : b<=15?'计时分项刷题，主攻判断题/配对题/地图题'
+                 : '全真模考专用，严格按考试时间连做（听40+读60+写60）';
     let cells='';
     for(let tn=1;tn<=4;tn++){
       const k='C'+b+'T'+tn, s=S.bank[k]||0;
       cells+='<span class="tcell s'+s+'" onclick="cycleBank(\''+k+'\')" title="T'+tn+'：未做→已做→已精刷">T'+tn+'</span>';
     }
     const kw=encodeURIComponent('剑桥雅思'+b+' PDF 真题 下载 听力音频');
-    el.innerHTML+='<div class="book"><b>剑'+b+'</b><span class="ph">'+ph+'</span><div class="cells">'+cells+'</div><a class="bdl" href="https://search.bilibili.com/all?keyword='+kw+'" target="_blank">📥 获取真题+音频</a></div>';
+    el.innerHTML+='<div class="book"><b>剑'+b+'</b><span class="ph">'+ph+'</span><div class="cells">'+cells+'</div>'
+      +'<a class="bdl" href="https://search.bilibili.com/all?keyword='+kw+'" target="_blank">📥 获取真题+音频</a>'
+      +'<details class="bdet"><summary>📋 题型结构</summary><div class="bdet-c">'
+      +'<b>本册含 4 套完整模考（Test 1–4）</b><ul>'
+      +'<li>🎧 听力：4 sections / 40题 / 30min+10min誊写</li>'
+      +'<li>📖 阅读：3 passages / 40题 / 60min</li>'
+      +'<li>✍️ 写作：Task1 图表150词(20min) + Task2 议论文250词(40min)</li>'
+      +'<li>🗣️ 口语：3 parts / 11–14min（按当季题库）</li></ul>'
+      +'<div class="hint">'+note+'</div></div></details></div>';
   }
 }
 function cycleBank(k){ S.bank[k]=((S.bank[k]||0)+1)%3; save(); renderBank(); }
@@ -539,7 +547,7 @@ function renderProg(){
   if(!days.length) hl.innerHTML='<div class="hint">还没有记录，今天开始打卡吧。</div>';
   days.slice(0,30).forEach(ds2=>{
     const r=S.days[ds2], tasks=tasksFor(ds2), dc=doneCount(ds2);
-    const chip=r.settled?(r.result==='ok'?'<span class="chip ok">达标 +⅓🥤</span>':'<span class="chip miss">未完成 −⅓🥤</span>'):'<span class="chip wait">进行中</span>';
+    const chip=r.settled?(r.result==='ok'?'<span class="chip ok">达标 +20元 💰</span>':'<span class="chip miss">未完成 −20元</span>'):'<span class="chip wait">进行中</span>';
     hl.innerHTML+='<div class="dayrow"><span>'+fmt(ds2)+'</span><span>'+dc+'/'+tasks.length+' 项 · '+(r.settled?(r.mins||0):doneMins(ds2))+'分钟 '+chip+'</span></div>';
   });
   refreshSync();
@@ -565,8 +573,8 @@ function doImport(){
   const ta=document.getElementById('syncBox'); const raw=ta.value.trim();
   if(!raw){ alert('请先在框内粘贴备份文本'); return; }
   try{ const s=JSON.parse(raw);
-    if(s&&s.days&&s.tea){ if(!confirm('导入将覆盖当前设备数据，确定继续？')) return; S=s; save(); renderAll(); alert('导入成功，数据与另一台设备已同步 🎉'); }
-    else alert('文本格式不正确（缺少 days/tea 字段）'); }
+    if(s&&s.days&&s.money){ if(!confirm('导入将覆盖当前设备数据，确定继续？')) return; S=s; save(); renderAll(); alert('导入成功，数据与另一台设备已同步 🎉'); }
+    else alert('文本格式不正确（缺少 days/money 字段）'); }
   catch(e){ alert('解析失败，请确认已完整粘贴 JSON 文本'); }
 }
 
@@ -579,13 +587,13 @@ document.querySelectorAll('.nav').forEach(b=>b.onclick=()=>{
 
 (function migrate(){
   try{ const old=JSON.parse(localStorage.getItem('ielts_wb_v1'));
-    if(old&&old.days&&!Object.keys(S.days).length&&!S.tea.length){
+    if(old&&old.days&&!Object.keys(S.days).length&&!S.money.length){
       S.firstUse=old.firstUse||S.firstUse;
       Object.keys(old.days).forEach(d=>{ const o=old.days[d]; const st={};
         Object.keys(o.checks||{}).forEach(k=>{ if(o.checks[k]) st[k]=2; });
         S.days[d]={st,settled:!!o.settled,result:o.result||null,mins:0}; });
-      (old.ledger||[]).forEach(e=>{ const delta=e.amt>0?1:-1;
-        S.tea.push({d:e.d,desc:delta>0?'任务全部完成 · 奖励⅓杯':'任务未完成 · 扣除⅓杯',delta,total:teaTotal()+delta}); });
+      (old.ledger||[]).forEach(e=>{ const delta=e.amt>0?20:-20;
+        S.money.push({d:e.d,desc:delta>0?'任务全部完成 · 奖励20元':'任务未完成 · 扣除20元',delta,total:moneyTotal()+delta}); });
       save();
     }
   }catch(e){}
