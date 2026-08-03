@@ -75,6 +75,9 @@ h2.sec{font-size:16px;font-weight:600;color:var(--green-deep);margin:6px 0 12px}
 .book{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
 .book b{font-size:13px;color:var(--green-deep)}
 .book .ph{font-size:11px;color:var(--muted);margin-left:4px}
+.book .cells{margin-top:6px}
+.book .bdl{display:inline-block;margin-top:8px;font-size:12px;color:var(--green-deep);text-decoration:none;border-bottom:1.5px solid var(--green-mid);font-weight:500}
+.book .bdl:hover{border-bottom-color:var(--green-deep)}
 .tcell{display:inline-block;width:30px;text-align:center;border:1px solid var(--line);border-radius:7px;font-size:12px;padding:3px 0;margin:4px 4px 0 0;cursor:pointer;background:#fff;user-select:none}
 .tcell.s1{background:var(--green-l);border-color:var(--green-mid);color:var(--green-deep)}
 .tcell.s2{background:var(--green);color:#fff;border-color:var(--green)}
@@ -188,14 +191,14 @@ textarea{width:100%;min-height:74px;resize:vertical}
 
     <section class="view" id="v-bank">
       <h2 class="sec">📚 真题刷题题库 · 剑4–剑19</h2>
-      <div class="hint" style="margin-bottom:12px">点击格子记录刷题状态：空白=未做 → 绿框=已做一遍 → 深绿=已精刷复盘。每本4套（T1–T4）。</div>
+      <div class="hint" style="margin-bottom:12px">点击格子记录刷题状态：空白=未做 → 绿框=已做一遍 → 深绿=已精刷复盘。每本4套（T1–T4）。每本书下方「📥 获取真题」可直达该题 PDF+听力音频的免费下载搜索。</div>
       <div class="phaserow">
-        <div class="phase"><b>剑4–9</b><div class="pd">阶段一 · 非计时精读精听</div></div>
-        <div class="phase"><b>剑10–15</b><div class="pd">阶段二 · 计时分项刷题</div></div>
-        <div class="phase"><b>剑16–19</b><div class="pd">阶段三 · 全真模考专用</div></div>
+        <div class="phase"><b>剑4–9</b><div class="pd">阶段一 · 非计时精读精听</div><a class="bdl" href="https://search.bilibili.com/all?keyword=%E5%89%91%E6%A1%A34-9%20PDF%20%E7%9C%9F%E9%A2%98%20%E4%B8%8B%E8%BD%BD" target="_blank">📥 阶段一下载</a></div>
+        <div class="phase"><b>剑10–15</b><div class="pd">阶段二 · 计时分项刷题</div><a class="bdl" href="https://search.bilibili.com/all?keyword=%E5%89%91%E6%A1%A310-15%20PDF%20%E7%9C%9F%E9%A2%98%20%E4%B8%8B%E8%BD%BD" target="_blank">📥 阶段二下载</a></div>
+        <div class="phase"><b>剑16–19</b><div class="pd">阶段三 · 全真模考专用</div><a class="bdl" href="https://search.bilibili.com/all?keyword=%E5%89%91%E6%A1%A316-19%20PDF%20%E7%9C%9F%E9%A2%98%20%E4%B8%8B%E8%BD%BD" target="_blank">📥 阶段三下载</a></div>
       </div>
       <div class="bank" id="bankGrid"></div>
-      <div class="hint" style="margin-top:10px">刷完记得把错题记入「错题复盘」，或直接把错题发我批改。</div>
+      <div class="hint" style="margin-top:10px">刷完记得把错题记入「错题复盘」，或直接把错题发我批改。真题为版权资料，这里提供的是免费资源搜索入口，请支持正版。</div>
     </section>
 
     <section class="view" id="v-err">
@@ -450,9 +453,10 @@ function renderBank(){
     let cells='';
     for(let tn=1;tn<=4;tn++){
       const k='C'+b+'T'+tn, s=S.bank[k]||0;
-      cells+='<span class="tcell s'+s+'" onclick="cycleBank(\''+k+'\')">T'+tn+'</span>';
+      cells+='<span class="tcell s'+s+'" onclick="cycleBank(\''+k+'\')" title="T'+tn+'：未做→已做→已精刷">T'+tn+'</span>';
     }
-    el.innerHTML+='<div class="book"><b>剑'+b+'</b><span class="ph">'+ph+'</span><div>'+cells+'</div></div>';
+    const kw=encodeURIComponent('剑桥雅思'+b+' PDF 真题 下载 听力音频');
+    el.innerHTML+='<div class="book"><b>剑'+b+'</b><span class="ph">'+ph+'</span><div class="cells">'+cells+'</div><a class="bdl" href="https://search.bilibili.com/all?keyword='+kw+'" target="_blank">📥 获取真题+音频</a></div>';
   }
 }
 function cycleBank(k){ S.bank[k]=((S.bank[k]||0)+1)%3; save(); renderBank(); }
