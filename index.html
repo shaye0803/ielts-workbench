@@ -67,6 +67,22 @@ h2.sec{font-size:16px;font-weight:600;color:var(--green-deep);margin:6px 0 12px}
 .twhy{background:var(--amber-l);border-radius:10px;padding:9px 12px;font-size:12.5px;color:#6B4A10;margin-top:9px}
 .tres{background:var(--green-l);border-radius:10px;padding:9px 12px;font-size:12.5px;color:#204A38;margin-top:8px;display:none}
 .tres.show{display:block}
+/* 今日单词模块 */
+.vocab{background:linear-gradient(180deg,#F2F8F1,#E8F2E8);border:1px solid var(--green);border-radius:14px;padding:14px 16px;margin-bottom:14px}
+.vocab-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:4px}
+.vocab-h b{color:var(--green-deep);font-size:15px}
+.vocab-h .cnt{font-size:12px;color:var(--muted)}
+.vlist{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.witem{background:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 11px;display:flex;flex-direction:column;gap:3px}
+.witem.ok{border-color:var(--green);background:var(--green-l)}
+.w-top{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.w-w{font-size:15px;font-weight:700;color:#204A38}
+.w-ph{font-size:12px;color:var(--muted)}
+.w-pos{font-size:11px;color:var(--green-deep);background:var(--green-l);padding:1px 6px;border-radius:6px}
+.w-zh{font-size:13px;color:#333}
+.w-ex{font-size:12px;color:#777;font-style:italic;line-height:1.4}
+.w-mark{margin-top:2px;align-self:flex-start;font-size:11px;padding:3px 10px;border-radius:8px;border:1px solid var(--green);background:#fff;color:var(--green-deep);cursor:pointer}
+.witem.ok .w-mark{background:var(--green);color:#fff;border-color:var(--green)}
 .tres a{color:var(--green-deep);text-decoration:none;border-bottom:1.5px solid var(--green-mid);font-weight:500;white-space:nowrap}
 .tres a:hover{border-bottom-color:var(--green-deep);text-decoration:none}
 .tbtns{display:flex;gap:10px;margin-top:12px}
@@ -144,6 +160,7 @@ textarea{width:100%;min-height:74px;resize:vertical}
     <section class="view on" id="v-daily">
       <h2 class="sec" id="dTitle">今日学习计划</h2>
       <div class="hint" id="dNote" style="margin-bottom:12px"></div>
+      <div id="vocabBox"></div>
       <div id="cards"></div>
       <div style="display:flex;gap:10px;align-items:center;margin-top:14px">
         <button class="btn" id="settleBtn" onclick="settleToday()">💰 今日打卡结算</button>
@@ -269,8 +286,8 @@ textarea{width:100%;min-height:74px;resize:vertical}
 const START='2026-07-29', P1_END='2026-10-04', P2_END='2026-11-29', END_D='2026-12-31', EXAM='2026-12-19';
 const KEY='ielts_wb_v2';
 let S=load();
-function load(){ try{const s=JSON.parse(localStorage.getItem(KEY)); if(s&&s.days)return s;}catch(e){}
-  return {days:{}, money:[], bank:{}, errors:[], firstUse:todayStr()}; }
+function load(){ try{const s=JSON.parse(localStorage.getItem(KEY)); if(s&&s.days){ s.vocabLearned=s.vocabLearned||{}; return s; }}catch(e){}
+  return {days:{}, money:[], bank:{}, errors:[], vocabLearned:{}, firstUse:todayStr()}; }
 function save(){ localStorage.setItem(KEY, JSON.stringify(S)); }
 function todayStr(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 function dateOf(s){return new Date(s+'T00:00:00');}
@@ -350,6 +367,143 @@ function tasksFor(ds){
   }
   return T;
 }
+
+/* ===== 今日单词：内置高频雅思词库（120词，按日自动轮换） ===== */
+const VOCAB=[
+ {w:'abandon',ph:'/əˈbændən/',pos:'v.',zh:'抛弃；放弃',ex:'The project was abandoned.'},
+ {w:'absorb',ph:'/əbˈzɔːb/',pos:'v.',zh:'吸收；使专注',ex:'Plants absorb sunlight.'},
+ {w:'accelerate',ph:'/əkˈseləreɪt/',pos:'v.',zh:'加速',ex:'The car accelerated quickly.'},
+ {w:'accomplish',ph:'/əˈkʌmplɪʃ/',pos:'v.',zh:'完成；实现',ex:'He accomplished his goal.'},
+ {w:'accurate',ph:'/ˈækjərət/',pos:'adj.',zh:'准确的',ex:'Give an accurate answer.'},
+ {w:'achieve',ph:'/əˈtʃiːv/',pos:'v.',zh:'达到；实现',ex:'She achieved high scores.'},
+ {w:'acquire',ph:'/əˈkwaɪə/',pos:'v.',zh:'获得；习得',ex:'Children acquire language fast.'},
+ {w:'adapt',ph:'/əˈdæpt/',pos:'v.',zh:'适应；改编',ex:'We adapt to change.'},
+ {w:'adequate',ph:'/ˈædɪkwət/',pos:'adj.',zh:'足够的',ex:'Provide adequate food.'},
+ {w:'adjust',ph:'/əˈdʒʌst/',pos:'v.',zh:'调整；适应',ex:'Adjust the settings.'},
+ {w:'advance',ph:'/ədˈvɑːns/',pos:'n./v.',zh:'进步；前进',ex:'Technology advances daily.'},
+ {w:'adverse',ph:'/ˈædvɜːs/',pos:'adj.',zh:'不利的',ex:'Adverse weather delayed us.'},
+ {w:'advocate',ph:'/ˈædvəkeɪt/',pos:'v.',zh:'提倡；拥护',ex:'He advocates recycling.'},
+ {w:'affect',ph:'/əˈfekt/',pos:'v.',zh:'影响',ex:'Noise affects sleep.'},
+ {w:'allocate',ph:'/ˈæləkeɪt/',pos:'v.',zh:'分配',ex:'Allocate more funds.'},
+ {w:'analyse',ph:'/ˈænəlaɪz/',pos:'v.',zh:'分析',ex:'Analyse the data first.'},
+ {w:'approach',ph:'/əˈprəʊtʃ/',pos:'n./v.',zh:'方法；接近',ex:'A new approach works.'},
+ {w:'appropriate',ph:'/əˈprəʊpriət/',pos:'adj.',zh:'合适的',ex:'Wear appropriate clothes.'},
+ {w:'assess',ph:'/əˈses/',pos:'v.',zh:'评估',ex:'Assess the risk.'},
+ {w:'assume',ph:'/əˈsjuːm/',pos:'v.',zh:'假定；承担',ex:'Assume it is true.'},
+ {w:'attribute',ph:'/əˈtrɪbjuːt/',pos:'v.',zh:'归因于',ex:'Attribute success to effort.'},
+ {w:'beneficial',ph:'/ˌbenɪˈfɪʃl/',pos:'adj.',zh:'有益的',ex:'Exercise is beneficial.'},
+ {w:'capacity',ph:'/kəˈpæsəti/',pos:'n.',zh:'能力；容量',ex:'It has capacity for 500.'},
+ {w:'challenge',ph:'/ˈtʃælɪndʒ/',pos:'n./v.',zh:'挑战',ex:'Face the challenge.'},
+ {w:'circumstance',ph:'/ˈsɜːkəmstəns/',pos:'n.',zh:'情况；环境',ex:'Under these circumstances.'},
+ {w:'cognitive',ph:'/ˈkɒɡnətɪv/',pos:'adj.',zh:'认知的',ex:'Cognitive skills develop.'},
+ {w:'compensate',ph:'/ˈkɒmpenseɪt/',pos:'v.',zh:'补偿',ex:'Compensate for the loss.'},
+ {w:'complex',ph:'/ˈkɒmpleks/',pos:'adj.',zh:'复杂的',ex:'A complex problem.'},
+ {w:'component',ph:'/kəmˈpəʊnənt/',pos:'n.',zh:'组成部分',ex:'A key component.'},
+ {w:'comprehensive',ph:'/ˌkɒmprɪˈhensɪv/',pos:'adj.',zh:'全面的',ex:'A comprehensive plan.'},
+ {w:'conclude',ph:'/kənˈkluːd/',pos:'v.',zh:'得出结论',ex:'Conclude the meeting.'},
+ {w:'conduct',ph:'/kənˈdʌkt/',pos:'v.',zh:'进行；引导',ex:'Conduct a survey.'},
+ {w:'consequence',ph:'/ˈkɒnsɪkwəns/',pos:'n.',zh:'后果',ex:'Face the consequence.'},
+ {w:'considerable',ph:'/kənˈsɪdərəbl/',pos:'adj.',zh:'相当大的',ex:'Considerable progress.'},
+ {w:'consist',ph:'/kənˈsɪst/',pos:'v.',zh:'由…组成',ex:'It consists of three parts.'},
+ {w:'constant',ph:'/ˈkɒnstənt/',pos:'adj.',zh:'持续的',ex:'Constant noise bothered us.'},
+ {w:'construct',ph:'/kənˈstrʌkt/',pos:'v.',zh:'建造；构建',ex:'Construct a model.'},
+ {w:'consume',ph:'/kənˈsjuːm/',pos:'v.',zh:'消耗',ex:'Consume less energy.'},
+ {w:'contemporary',ph:'/kənˈtemprəri/',pos:'adj.',zh:'当代的',ex:'Contemporary art.'},
+ {w:'contribute',ph:'/kənˈtrɪbjuːt/',pos:'v.',zh:'贡献；导致',ex:'Contribute to society.'},
+ {w:'controversial',ph:'/ˌkɒntrəˈvɜːʃl/',pos:'adj.',zh:'有争议的',ex:'A controversial topic.'},
+ {w:'convince',ph:'/kənˈvɪns/',pos:'v.',zh:'使信服',ex:'Convince the audience.'},
+ {w:'crucial',ph:'/ˈkruːʃl/',pos:'adj.',zh:'关键的',ex:'A crucial decision.'},
+ {w:'culture',ph:'/ˈkʌltʃə/',pos:'n.',zh:'文化',ex:'Local culture matters.'},
+ {w:'decline',ph:'/dɪˈklaɪn/',pos:'v./n.',zh:'下降；拒绝',ex:'Sales declined.'},
+ {w:'demonstrate',ph:'/ˈdemənstreɪt/',pos:'v.',zh:'证明；演示',ex:'Demonstrate the method.'},
+ {w:'depict',ph:'/dɪˈpɪkt/',pos:'v.',zh:'描绘',ex:'The painting depicts war.'},
+ {w:'derive',ph:'/dɪˈraɪv/',pos:'v.',zh:'源于；获得',ex:'Derive from Latin.'},
+ {w:'detect',ph:'/dɪˈtekt/',pos:'v.',zh:'察觉；检测',ex:'Detect a problem early.'},
+ {w:'devise',ph:'/dɪˈvaɪz/',pos:'v.',zh:'设计；想出',ex:'Devise a strategy.'},
+ {w:'diminish',ph:'/dɪˈmɪnɪʃ/',pos:'v.',zh:'减少；削弱',ex:'Diminish the risk.'},
+ {w:'distinct',ph:'/dɪˈstɪŋkt/',pos:'adj.',zh:'明显的；不同的',ex:'A distinct smell.'},
+ {w:'distribute',ph:'/dɪˈstrɪbjuːt/',pos:'v.',zh:'分配；分布',ex:'Distribute the tasks.'},
+ {w:'diverse',ph:'/daɪˈvɜːs/',pos:'adj.',zh:'多样的',ex:'A diverse group.'},
+ {w:'dominate',ph:'/ˈdɒmɪneɪt/',pos:'v.',zh:'主导',ex:'One team dominated.'},
+ {w:'dramatic',ph:'/drəˈmætɪk/',pos:'adj.',zh:'显著的',ex:'A dramatic change.'},
+ {w:'economic',ph:'/ˌiːkəˈnɒmɪk/',pos:'adj.',zh:'经济的',ex:'Economic growth.'},
+ {w:'efficient',ph:'/ɪˈfɪʃnt/',pos:'adj.',zh:'高效的',ex:'An efficient system.'},
+ {w:'eliminate',ph:'/ɪˈlɪmɪneɪt/',pos:'v.',zh:'消除',ex:'Eliminate errors.'},
+ {w:'emerge',ph:'/ɪˈmɜːdʒ/',pos:'v.',zh:'出现；浮现',ex:'A trend emerged.'},
+ {w:'emphasize',ph:'/ˈemfəsaɪz/',pos:'v.',zh:'强调',ex:'Emphasize safety.'},
+ {w:'enable',ph:'/ɪˈneɪbl/',pos:'v.',zh:'使能够',ex:'Enable users to learn.'},
+ {w:'enhance',ph:'/ɪnˈhɑːns/',pos:'v.',zh:'提高；增强',ex:'Enhance performance.'},
+ {w:'environment',ph:'/ɪnˈvaɪrənmənt/',pos:'n.',zh:'环境',ex:'Protect the environment.'},
+ {w:'establish',ph:'/ɪˈstæblɪʃ/',pos:'v.',zh:'建立',ex:'Establish a new rule.'},
+ {w:'evaluate',ph:'/ɪˈvæljueɪt/',pos:'v.',zh:'评价',ex:'Evaluate the result.'},
+ {w:'evident',ph:'/ˈevɪdənt/',pos:'adj.',zh:'明显的',ex:'Evident progress.'},
+ {w:'evolve',ph:'/ɪˈvɒlv/',pos:'v.',zh:'进化；发展',ex:'Languages evolve.'},
+ {w:'exceed',ph:'/ɪkˈsiːd/',pos:'v.',zh:'超过',ex:'Exceed the limit.'},
+ {w:'exclude',ph:'/ɪkˈskluːd/',pos:'v.',zh:'排除',ex:'Exclude the option.'},
+ {w:'expand',ph:'/ɪkˈspænd/',pos:'v.',zh:'扩张',ex:'Expand the market.'},
+ {w:'exploit',ph:'/ɪkˈsplɔɪt/',pos:'v.',zh:'利用；开发',ex:'Exploit resources.'},
+ {w:'explore',ph:'/ɪkˈsplɔː/',pos:'v.',zh:'探索',ex:'Explore new ideas.'},
+ {w:'export',ph:'/ɪkˈspɔːt/',pos:'v.',zh:'出口',ex:'Export goods abroad.'},
+ {w:'expose',ph:'/ɪkˈspəʊz/',pos:'v.',zh:'暴露；使接触',ex:'Expose to sunlight.'},
+ {w:'facilitate',ph:'/fəˈsɪlɪteɪt/',pos:'v.',zh:'促进',ex:'Facilitate learning.'},
+ {w:'factor',ph:'/ˈfæktə/',pos:'n.',zh:'因素',ex:'A key factor.'},
+ {w:'feature',ph:'/ˈfiːtʃə/',pos:'n./v.',zh:'特征；以…为特色',ex:'A unique feature.'},
+ {w:'focus',ph:'/ˈfəʊkəs/',pos:'n./v.',zh:'焦点；集中',ex:'Focus on the task.'},
+ {w:'fundamental',ph:'/ˌfʌndəˈmentl/',pos:'adj.',zh:'基本的',ex:'A fundamental right.'},
+ {w:'generate',ph:'/ˈdʒenəreɪt/',pos:'v.',zh:'产生',ex:'Generate income.'},
+ {w:'global',ph:'/ˈɡləʊbl/',pos:'adj.',zh:'全球的',ex:'A global issue.'},
+ {w:'guarantee',ph:'/ˌɡærənˈtiː/',pos:'v.',zh:'保证',ex:'Guarantee quality.'},
+ {w:'identify',ph:'/aɪˈdentɪfaɪ/',pos:'v.',zh:'识别；确认',ex:'Identify the cause.'},
+ {w:'impact',ph:'/ˈɪmpækt/',pos:'n./v.',zh:'影响',ex:'A huge impact.'},
+ {w:'implement',ph:'/ˈɪmplɪment/',pos:'v.',zh:'实施',ex:'Implement the plan.'},
+ {w:'imply',ph:'/ɪmˈplaɪ/',pos:'v.',zh:'暗示',ex:'It implies risk.'},
+ {w:'indicate',ph:'/ˈɪndɪkeɪt/',pos:'v.',zh:'表明',ex:'Data indicates growth.'},
+ {w:'inevitable',ph:'/ɪnˈevɪtəbl/',pos:'adj.',zh:'不可避免的',ex:'An inevitable result.'},
+ {w:'influence',ph:'/ˈɪnfluəns/',pos:'n./v.',zh:'影响',ex:'A strong influence.'},
+ {w:'inhabit',ph:'/ɪnˈhæbɪt/',pos:'v.',zh:'居住于',ex:'Species inhabit forests.'},
+ {w:'institute',ph:'/ˈɪnstɪtjuːt/',pos:'n.',zh:'机构',ex:'A research institute.'},
+ {w:'interpret',ph:'/ɪnˈtɜːprɪt/',pos:'v.',zh:'解释；口译',ex:'Interpret the result.'},
+ {w:'involve',ph:'/ɪnˈvɒlv/',pos:'v.',zh:'涉及；包含',ex:'It involves risk.'},
+ {w:'isolate',ph:'/ˈaɪsəleɪt/',pos:'v.',zh:'隔离',ex:'Isolate the problem.'},
+ {w:'major',ph:'/ˈmeɪdʒə/',pos:'adj.',zh:'主要的',ex:'A major change.'},
+ {w:'maintain',ph:'/meɪnˈteɪn/',pos:'v.',zh:'维持；保养',ex:'Maintain order.'},
+ {w:'manipulate',ph:'/məˈnɪpjuleɪt/',pos:'v.',zh:'操纵',ex:'Manipulate data.'},
+ {w:'manufacture',ph:'/ˌmænjuˈfæktʃə/',pos:'v.',zh:'制造',ex:'Manufacture cars.'},
+ {w:'marine',ph:'/məˈriːn/',pos:'adj.',zh:'海洋的',ex:'Marine life.'},
+ {w:'massive',ph:'/ˈmæsɪv/',pos:'adj.',zh:'巨大的',ex:'A massive building.'},
+ {w:'maturity',ph:'/məˈtʃʊərəti/',pos:'n.',zh:'成熟',ex:'Reach maturity.'},
+ {w:'method',ph:'/ˈmeθəd/',pos:'n.',zh:'方法',ex:'A scientific method.'},
+ {w:'migrate',ph:'/maɪˈɡreɪt/',pos:'v.',zh:'迁移',ex:'Birds migrate south.'},
+ {w:'minimum',ph:'/ˈmɪnɪməm/',pos:'adj./n.',zh:'最小的',ex:'The minimum age.'},
+ {w:'modify',ph:'/ˈmɒdɪfaɪ/',pos:'v.',zh:'修改',ex:'Modify the design.'},
+ {w:'monitor',ph:'/ˈmɒnɪtə/',pos:'v.',zh:'监控',ex:'Monitor progress.'},
+ {w:'motive',ph:'/ˈməʊtɪv/',pos:'n.',zh:'动机',ex:'A hidden motive.'},
+ {w:'neglect',ph:'/nɪˈɡlekt/',pos:'v.',zh:'忽视',ex:'Do not neglect safety.'},
+ {w:'notion',ph:'/ˈnəʊʃn/',pos:'n.',zh:'概念',ex:'A strange notion.'},
+ {w:'obtain',ph:'/əbˈteɪn/',pos:'v.',zh:'获得',ex:'Obtain a degree.'},
+ {w:'obvious',ph:'/ˈɒbviəs/',pos:'adj.',zh:'明显的',ex:'An obvious mistake.'},
+ {w:'occupation',ph:'/ˌɒkjuˈpeɪʃn/',pos:'n.',zh:'职业；占据',ex:'His occupation is teaching.'},
+ {w:'occur',ph:'/əˈkɜː/',pos:'v.',zh:'发生',ex:'Accidents occur.'},
+ {w:'offset',ph:'/ˈɒfset/',pos:'v.',zh:'抵消',ex:'Offset the cost.'},
+ {w:'oppose',ph:'/əˈpəʊz/',pos:'v.',zh:'反对',ex:'Many oppose the plan.'},
+ {w:'option',ph:'/ˈɒpʃn/',pos:'n.',zh:'选择',ex:'Several options.'},
+ {w:'organic',ph:'/ɔːˈɡænɪk/',pos:'adj.',zh:'有机的',ex:'Organic food.'},
+ {w:'outcome',ph:'/ˈaʊtkʌm/',pos:'n.',zh:'结果',ex:'A positive outcome.'},
+ {w:'overload',ph:'/ˌəʊvəˈləʊd/',pos:'v.',zh:'使超载',ex:'Do not overload.'}
+];
+function dayIdx(){ const d=dateOf(todayStr()),s=dateOf(START); return Math.floor((d-s)/86400000); }
+function todayWords(){ const n=VOCAB.length, idx=((dayIdx()*7)%n+n)%n, out=[]; for(let k=0;k<12;k++) out.push(VOCAB[(idx+k)%n]); return out; }
+function renderVocab(){
+  const box=document.getElementById('vocabBox'); if(!box) return;
+  S.vocabLearned=S.vocabLearned||{};
+  const ws=todayWords(), known=ws.filter(x=>S.vocabLearned[x.w]).length;
+  let h='<div class="vocab-h"><b>📖 今日单词</b><span class="cnt">已掌握 '+known+'/'+ws.length+' · 点「标记掌握」可存档</span></div><div class="vlist">';
+  ws.forEach(x=>{ const ok=S.vocabLearned[x.w];
+    h+='<div class="witem'+(ok?' ok':'')+'"><div class="w-top"><span class="w-w">'+x.w+'</span><span class="w-ph">'+x.ph+'</span><span class="w-pos">'+x.pos+'</span></div><div class="w-zh">'+x.zh+'</div>'+(x.ex?'<div class="w-ex">e.g. '+x.ex+'</div>':'')+'<button class="w-mark" onclick="toggleVocabWord(\''+x.w+'\')">'+(ok?'✓ 已掌握':'标记掌握')+'</button></div>';
+  });
+  h+='</div>'; box.innerHTML=h;
+}
+function toggleVocabWord(w){ S.vocabLearned=S.vocabLearned||{}; if(S.vocabLearned[w]) delete S.vocabLearned[w]; else S.vocabLearned[w]=1; save(); renderVocab(); }
 
 function dayRec(ds){ if(!S.days[ds]) S.days[ds]={st:{},settled:false,result:null,mins:0}; return S.days[ds]; }
 function stat(ds,i){ return dayRec(ds).st[i]||0; }
@@ -433,6 +587,7 @@ function renderDaily(){
       '<div class="tbtns">'+btns+'<button class="btn ghost sm" onclick="toggleRes('+i+')">查看配套学习资料</button></div>';
     el.appendChild(card);
   });
+  renderVocab();
   const btn=document.getElementById('settleBtn'), sn=document.getElementById('settleNote');
   if(r.settled){ btn.disabled=true; sn.innerHTML=r.result==='ok'?'<span class="chip ok">今日达标 +20元 💰</span>':'<span class="chip miss">今日未完成 −20元</span>'; }
   else{ btn.disabled=false; sn.textContent=allDone(t)?'全部完成！结算领取20元奖励 💰':'今日已学 '+doneMins(t)+' 分钟'; }
@@ -553,7 +708,7 @@ function renderProg(){
   refreshSync();
 }
 
-function renderAll(){ renderTop(); renderDaily(); renderBank(); renderErr(); renderReview(); renderProg(); }
+function renderAll(){ renderTop(); renderDaily(); renderVocab(); renderBank(); renderErr(); renderReview(); renderProg(); }
 
 function exportData(){
   const a=document.createElement('a');
